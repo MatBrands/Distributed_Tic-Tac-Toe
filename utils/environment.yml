@@ -1,0 +1,8 @@
+name: tic_tac_game_venv
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - pip
+  - numpy
+  - pyro5
