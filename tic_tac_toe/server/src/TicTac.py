@@ -49,15 +49,19 @@ class TicTac:
                 # Rows
                 if np.unique(self.board[i, j:j+4]).size == 1:
                     if self.board[i, j] == 'X':
+                        self.reset_board()
                         return 1
                     elif self.board[i, j] == 'O':
+                        self.reset_board()
                         return 2
 
                 # Columns
                 if np.unique(self.board[j:j+4, i]).size == 1:
                     if self.board[j, i] == 'X':
+                        self.reset_board()
                         return 1
                     elif self.board[j, i] == 'O':
+                        self.reset_board()
                         return 2
                     
             if i < BOARD_SIZE-4:
@@ -66,34 +70,43 @@ class TicTac:
                     value = np.diag(self.board, k=i)
                     if np.unique(value[j:j+4]).size == 1:
                         if value[j] == 'X':
+                            self.reset_board()
                             return 1
                         elif value[j] == 'O':
+                            self.reset_board()
                             return 2
                     
                     value = np.diag(self.board, k=i*-1)    
                     if np.unique(value[j:j+4]).size == 1:
                         if value[j] == 'X':
+                            self.reset_board()
                             return 1
                         elif value[j] == 'O':
+                            self.reset_board()
                             return 2
                     
                     # Reverse Diagonal
                     value = np.diag(np.fliplr(self.board), k=i)
                     if np.unique(value[j:j+4]).size == 1:
                         if value[j] == 'X':
+                            self.reset_board()
                             return 1
                         elif value[j] == 'O':
+                            self.reset_board()
                             return 2
                         
                     value = np.diag(np.fliplr(self.board), k=i*-1)
                     if np.unique(value[j:j+4]).size == 1:
                         if value[j] == 'X':
+                            self.reset_board()
                             return 1
                         elif value[j] == 'O':
+                            self.reset_board()
                             return 2
                     
         # Draw    
         if ' ' not in self.board.ravel():
+            self.reset_board()
             return 3
             
         return 0
