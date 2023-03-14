@@ -44,29 +44,33 @@ class TicTac:
             if i < BOARD_SIZE-4:
                 for j in np.arange(BOARD_SIZE-3):
                     # Diagonal
-                    if np.unique(np.diag(self.board, k=i)[j:j+4]).size == 1:
-                        if np.diag(self.board, k=i)[j] == 'X':
+                    value = np.diag(self.board, k=i)
+                    if np.unique(value[j:j+4]).size == 1:
+                        if value[j] == 'X':
                             return 1
-                        elif np.diag(self.board, k=i)[j] == 'O':
+                        elif value[j] == 'O':
+                            return 2
+                    
+                    value = np.diag(self.board, k=i*-1)    
+                    if np.unique(value[j:j+4]).size == 1:
+                        if value[j] == 'X':
+                            return 1
+                        elif value[j] == 'O':
+                            return 2
+                    
+                    # Reverse Diagonal
+                    value = np.diag(np.fliplr(self.board), k=i)
+                    if np.unique(value[j:j+4]).size == 1:
+                        if value[j] == 'X':
+                            return 1
+                        elif value[j] == 'O':
                             return 2
                         
-                    if np.unique(np.diag(self.board, k=i*-1)[j:j+4]).size == 1:
-                        if np.diag(self.board, k=i*-1)[j] == 'X':
+                    value = np.diag(np.fliplr(self.board), k=i*-1)
+                    if np.unique(value[j:j+4]).size == 1:
+                        if value[j] == 'X':
                             return 1
-                        elif np.diag(self.board, k=i*-1)[j] == 'O':
-                            return 2
-                        
-                    # Reverse Diagonal            
-                    if np.unique(np.diag(np.fliplr(self.board), k=i)[j:j+4]).size == 1:
-                        if np.diag(np.fliplr(self.board), k=i)[j] == 'X':
-                            return 1
-                        elif np.diag(np.fliplr(self.board), k=i)[j] == 'O':
-                            return 2
-                        
-                    if np.unique(np.diag(np.fliplr(self.board), k=i*-1)[j:j+4]).size == 1:
-                        if np.diag(np.fliplr(self.board), k=i*-1)[j] == 'X':
-                            return 1
-                        elif np.diag(np.fliplr(self.board), k=i*-1)[j] == 'O':
+                        elif value[j] == 'O':
                             return 2
                     
         # Draw    
