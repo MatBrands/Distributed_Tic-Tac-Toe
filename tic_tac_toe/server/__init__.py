@@ -15,7 +15,6 @@ class Server:
     def client_disconnected(self, connection: Pyro5) -> None:
         client_id = self._client_id_by_connection[connection]
         self.game.reset_board()
-        self.game.player.remove(client_id)
         print(f"Cliente: {client_id} desconectado")
     
 if __name__ == '__main__':
