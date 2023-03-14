@@ -6,19 +6,38 @@ BOARD_SIZE = 7
 @Pyro5.expose
 class TicTac:
     def __init__(self) -> None:
+        self.player = []
         self.reset_board()
+        self.current_player = 'X'
         
     def reset_board(self) -> None:
+        self.player = []
         self.board = np.full((BOARD_SIZE, BOARD_SIZE), ' ')
+            
+    def set_player(self, player: str) -> None:
+        if player not in self.player:
+            self.player.append(player)
+        
+    def get_player(self) -> list:
+        return self.player
             
     def get_board(self) -> np:
         return self.board.tolist()
             
-    def play(self, x: int, y: int, char: str) -> bool:
+    def can_play(self, player:str) -> bool:
+        if self.current_player == player:
+            return True
+        else:
+            return False
+            
+    def make_move(self, x: int, y: int, char: str) -> bool:
         if x < 0 or x > BOARD_SIZE-1 or y < 0 or y > BOARD_SIZE-1:
             return False
         
         if self.board[x, y] == ' ':
+            if self.current_player == 'X': self.current_player = 'O'
+            else: self.current_player = 'X'
+                
             self.board[x, y] = char
             return True
         else:
@@ -74,7 +93,7 @@ class TicTac:
                             return 2
                     
         # Draw    
-        if np.unique(self.board.ravel()).size == 2 and ' ' not in self.board.ravel():
+        if ' ' not in self.board.ravel():
             return 3
             
         return 0

@@ -1,5 +1,5 @@
 import Pyro5.server as Pyro5
-from TicTac import TicTac
+from src.TicTac import TicTac
 
 class Server:
     def __init__(self) -> None:
@@ -8,19 +8,18 @@ class Server:
 
     def client_connected(self, connection: Pyro5, client_id: str) -> None:
         print(f"Cliente: {client_id} conectado")
+        self.game.set_player(client_id)
 
         self._client_id_by_connection[connection] = client_id
 
     def client_disconnected(self, connection: Pyro5) -> None:
         client_id = self._client_id_by_connection[connection]
         self.game.reset_board()
+        self.game.player.remove(client_id)
         print(f"Cliente: {client_id} desconectado")
     
 if __name__ == '__main__':
     server = Server()
-    
-    Pyro5.config.THREADPOOL_SIZE_MIN = 1
-    Pyro5.config.THREADPOOL_SIZE = 1
     
     daemon = Pyro5.Daemon(port=46327)
     uri = daemon.register(server.game, objectId="Tic-Tac-Toe")
