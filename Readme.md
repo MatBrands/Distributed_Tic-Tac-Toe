@@ -97,7 +97,7 @@ Execute o programa
 python __init__.py
 ```
 
-###
+### Client
 Após o servidor estar ativo, pode-se executar o cliente.
 
 Navegar até a pasta de destino
