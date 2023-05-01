@@ -34,10 +34,10 @@ if __name__ == '__main__':
     client_id = str(uuid4())
     
     try:
-        # ip = input('Server IP: ')
+        # host = input('Server host: ')
         # port = int(input('Server Port: '))
-        ip, port = 'localhost', 46327
-        lobby = Pyro5.Proxy(f"PYRO:Tic-Tac-Toe@{ip}:{port}")
+        host, port = 'localhost', 46327
+        lobby = Pyro5.Proxy(f"PYRO:Tic-Tac-Toe@{host}:{port}")
         lobby._pyroHandshake = client_id
         lobby._pyroBind()
     except:
@@ -105,6 +105,7 @@ if __name__ == '__main__':
     game = Pyro5.Proxy(uri)
     game._pyroBind()
 
+    clear()
     if client_id in game.get_player()[0]:
         print('You are player 1')
         play = 'X'
@@ -124,7 +125,7 @@ if __name__ == '__main__':
             print('Aguardando oponente', end=' ')
             for i in range(3):
                 print(".", end="", flush=True)
-                sleep(1)
+                sleep(.5)
         elif not status:
             break
         else:

@@ -24,7 +24,7 @@ class Server:
             print(f"Cliente: {client_id} desconectado")
     
 if __name__ == '__main__':
-    daemon = Pyro5.Daemon(port=46327)
+    daemon = Pyro5.Daemon(host='localhost', port=46327)
     
     server = Server(daemon)
     
