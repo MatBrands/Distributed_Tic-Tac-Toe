@@ -1,5 +1,6 @@
 from uuid import uuid4
 from os import system
+from time import sleep
 import platform
 import Pyro5.client as Pyro5
 
@@ -7,33 +8,26 @@ BOARD_SIZE = 7
 
 def print_board(board: list) -> None:
     print(f'   ', end=' ')
-    for i in range(BOARD_SIZE):
-        print (f'{i}   ', end='')
+    for i in range(BOARD_SIZE): print (f'{i}   ', end='')
+    
     print()
+    
     for i in range(BOARD_SIZE):
         print(f'{i}  ', end='')
-        for j in range(BOARD_SIZE):
-            print(f'[{board[i][j]}]', end=' ')
+        for j in range(BOARD_SIZE): print(f'[{board[i][j]}]', end=' ')
         print()
 
 def is_a_win(winner: bool) -> bool:
     match winner:
-        case 1:
-            input(f'Player 1 wins')
-        case 2:
-            input(f'Player 2 wins')
-        case 3:
-            input(f'Draw')
-        case _:
-            return True
+        case 1|2: input(f'Player {winner} wins')
+        case 3: input(f'Draw')
+        case _: return True
     return False
 
 def clear() -> None:
     so = platform.system()
-    if so == 'Windows':
-        system('cls')
-    else:
-        system('clear')
+    if so == 'Windows': system('cls')
+    else: system('clear')
 
 if __name__ == '__main__':
     status = True
@@ -43,12 +37,73 @@ if __name__ == '__main__':
         # ip = input('Server IP: ')
         # port = int(input('Server Port: '))
         ip, port = 'localhost', 46327
-        game = Pyro5.Proxy(f"PYRO:Tic-Tac-Toe@{ip}:{port}")
-        game._pyroHandshake = client_id
-        game._pyroBind()
+        lobby = Pyro5.Proxy(f"PYRO:Tic-Tac-Toe@{ip}:{port}")
+        lobby._pyroHandshake = client_id
+        lobby._pyroBind()
     except:
-        print('Invalid server')
+        print('Erro ao conectar ao servidor')
         exit()
+
+    print(f'Bem vindo ao jogo da velha online, seu id é: {client_id}')
+    while True:
+        print('1 - Observar salas')
+        print('2 - Criar sala')
+        print('3 - Entrar em uma sala')
+        print('Outra opção - Sair')
+        
+        option = input('Opção: ')
+        match option:
+            case '1':
+                salas = lobby.get_waiting_room()
+                if len(salas):
+                    print('Salas disponíveis:')
+                    for item in salas:
+                        print(item)
+                else:
+                    print('Não há salas disponíveis')
+                input('Pressione enter para continuar.\n')
+            case '2':
+                print('Criando sala...')
+                lobby.add_to_waiting_room(client_id)
+                print('Sala criada com sucesso!')
+                input('Pressione enter para continuar.\n')
+                break
+            case '3':
+                salas = lobby.get_waiting_room()
+                if len(salas):
+                    print('Salas disponíveis:')
+                    for i, item in enumerate(salas):
+                        print(f'{i} - {item}')
+                    target = input('Qual sala deseja entrar?\n')
+                    if target.isdigit() and 0<= int(target) < len(salas):
+                        target = int(target)
+                        print('Entrando na sala...')
+                        lobby.match_players(client_id, salas[target])
+                        break
+                    else:
+                        print('Opção inválida')
+                        input('Pressione enter para continuar.\n')
+                else:
+                    print('Não há salas disponíveis')
+                    input('Pressione enter para continuar.\n')
+            case _: 
+                lobby._pyroRelease()
+                exit()
+        clear()
+    clear()
+    
+    while True:
+        uri = lobby.get_game(client_id)
+        if uri: break
+        else: 
+            clear()
+            print('Aguardando oponente', end=' ')
+            for i in range(3):
+                print(".", end="", flush=True)
+                sleep(1)
+
+    game = Pyro5.Proxy(uri)
+    game._pyroBind()
 
     if client_id in game.get_player()[0]:
         print('You are player 1')
@@ -57,24 +112,26 @@ if __name__ == '__main__':
         print('You are player 2')
         play = 'O'
 
-    input()
+    input('Pressione enter para continuar.\n')
     
     while status:
         clear()
         
         status = is_a_win(game.check_win())
         
-        if not game.can_play(play):
-            print("Waiting for opponent's move...")
+        if not game.can_play(play) and status:
             clear()
+            print('Aguardando oponente', end=' ')
+            for i in range(3):
+                print(".", end="", flush=True)
+                sleep(1)
         elif not status:
             break
         else:
-            if play in 'X':
-                print(f'Player 1, place the {play}')
-            else:
-                print(f'Player 2, place the {play}')
+            if play in 'X': i = 1
+            else: i = 2
             
+            print(f'Player {i}, posicione {play}')
             board = game.get_board()
             print_board(board)
             
@@ -86,9 +143,9 @@ if __name__ == '__main__':
                     status = False
                     break
                 except:
-                    input('Invalid move')
+                    input('Movimento inválido')
                 else:
                     if game.make_move(x, y, play): break
-                    input('Invalid move')
+                    input('Movimento inválido')
     
     game._pyroRelease()
