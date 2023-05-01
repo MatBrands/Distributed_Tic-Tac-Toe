@@ -29,21 +29,7 @@ def clear() -> None:
     if so == 'Windows': system('cls')
     else: system('clear')
 
-if __name__ == '__main__':
-    status = True
-    client_id = str(uuid4())
-    
-    try:
-        # host = input('Server host: ')
-        # port = int(input('Server Port: '))
-        host, port = 'localhost', 46327
-        lobby = Pyro5.Proxy(f"PYRO:Tic-Tac-Toe@{host}:{port}")
-        lobby._pyroHandshake = client_id
-        lobby._pyroBind()
-    except:
-        print('Erro ao conectar ao servidor')
-        exit()
-
+def tela_inicial(lobby, client_id) -> None:
     print(f'Bem vindo ao jogo da velha online, seu id é: {client_id}')
     while True:
         print('1 - Observar salas')
@@ -91,6 +77,24 @@ if __name__ == '__main__':
                 exit()
         clear()
     clear()
+    return None
+
+if __name__ == '__main__':
+    status = True
+    client_id = str(uuid4())
+    
+    try:
+        # host = input('Server host: ')
+        # port = int(input('Server Port: '))
+        host, port = 'localhost', 46327
+        lobby = Pyro5.Proxy(f"PYRO:Tic-Tac-Toe@{host}:{port}")
+        lobby._pyroHandshake = client_id
+        lobby._pyroBind()
+    except:
+        print('Erro ao conectar ao servidor')
+        exit()
+
+    tela_inicial(lobby, client_id)
     
     while True:
         uri = lobby.get_game(client_id)
@@ -102,9 +106,14 @@ if __name__ == '__main__':
                 print(".", end="", flush=True)
                 sleep(1)
 
-    game = Pyro5.Proxy(uri)
-    game._pyroBind()
-
+    try:
+        game = Pyro5.Proxy(uri)
+        game._pyroBind()
+    except:
+        print('Erro ao conectar ao game')
+        lobby._pyroRelease()
+        exit()
+        
     clear()
     if client_id in game.get_player()[0]:
         print('You are player 1')
@@ -122,7 +131,7 @@ if __name__ == '__main__':
         
         if not game.can_play(play) and status:
             clear()
-            print('Aguardando oponente', end=' ')
+            print('Aguardando jogada do oponente', end=' ')
             for i in range(3):
                 print(".", end="", flush=True)
                 sleep(.5)
@@ -142,6 +151,8 @@ if __name__ == '__main__':
                     y = int(input('Y: '))
                 except KeyboardInterrupt:
                     status = False
+                    game._pyroRelease()
+                    lobby._pyroRelease()
                     break
                 except:
                     input('Movimento inválido')
@@ -150,3 +161,4 @@ if __name__ == '__main__':
                     input('Movimento inválido')
     
     game._pyroRelease()
+    lobby._pyroRelease()
