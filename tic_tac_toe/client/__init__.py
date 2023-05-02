@@ -11,7 +11,6 @@ def print_board(board: list) -> None:
     for i in range(BOARD_SIZE): print (f'{i}   ', end='')
     
     print()
-    
     for i in range(BOARD_SIZE):
         print(f'{i}  ', end='')
         for j in range(BOARD_SIZE): print(f'[{board[i][j]}]', end=' ')
@@ -29,13 +28,10 @@ def clear() -> None:
     if so == 'Windows': system('cls')
     else: system('clear')
 
-def tela_inicial(lobby, client_id) -> None:
+def tela_inicial(lobby, client_id: uuid4) -> None:
     print(f'Bem vindo ao jogo da velha online, seu id é: {client_id}')
     while True:
-        print('1 - Observar salas')
-        print('2 - Criar sala')
-        print('3 - Entrar em uma sala')
-        print('Outra opção - Sair')
+        print('1 - Observar salas\n2 - Criar sala\n3 - Entrar em uma sala\nOutra opção - Sair')
         
         option = input('Opção: ')
         match option:
@@ -61,9 +57,15 @@ def tela_inicial(lobby, client_id) -> None:
                     for i, item in enumerate(salas):
                         print(f'{i} - {item}')
                     target = input('Qual sala deseja entrar?\n')
-                    if target.isdigit() and 0<= int(target) < len(salas):
+                    if target.isdigit() and 0 <= int(target) < len(salas):
                         target = int(target)
-                        print('Entrando na sala...')
+                        
+                        clear()
+                        print('Entrando na sala ', end='')
+                        for i in range(3):
+                            print(".", end="", flush=True)
+                            sleep(1)
+                        
                         lobby.match_players(client_id, salas[target])
                         break
                     else:
@@ -80,7 +82,7 @@ def tela_inicial(lobby, client_id) -> None:
     return None
 
 if __name__ == '__main__':
-    status = True
+    clear()
     client_id = str(uuid4())
     
     try:
@@ -101,6 +103,7 @@ if __name__ == '__main__':
         if uri: break
         else: 
             clear()
+            print(f'Seu id é: {client_id}')
             print('Aguardando oponente', end=' ')
             for i in range(3):
                 print(".", end="", flush=True)
@@ -116,49 +119,55 @@ if __name__ == '__main__':
         
     clear()
     if client_id in game.get_player()[0]:
-        print('You are player 1')
-        play = 'X'
+        print('You are player 1'); play = 'X'
     else:
-        print('You are player 2')
-        play = 'O'
+        print('You are player 2'); play = 'O'
 
     input('Pressione enter para continuar.\n')
     
-    while status:
-        clear()
-        
-        status = is_a_win(game.check_win())
-        
-        if not game.can_play(play) and status:
+    try:
+        status = True
+        while status:
             clear()
-            print('Aguardando jogada do oponente', end=' ')
-            for i in range(3):
-                print(".", end="", flush=True)
-                sleep(.5)
-        elif not status:
-            break
-        else:
-            if play in 'X': i = 1
-            else: i = 2
             
-            print(f'Player {i}, posicione {play}')
-            board = game.get_board()
-            print_board(board)
+            status = is_a_win(game.check_win())
             
-            while True:
-                try:
-                    x = int(input('X: '))
-                    y = int(input('Y: '))
-                except KeyboardInterrupt:
-                    status = False
-                    game._pyroRelease()
-                    lobby._pyroRelease()
-                    break
-                except:
-                    input('Movimento inválido')
-                else:
-                    if game.make_move(x, y, play): break
-                    input('Movimento inválido')
-    
+            if not game.can_play(play) and status:
+                clear()
+                print('Aguardando jogada do oponente', end=' ')
+                for i in range(3):
+                    print(".", end="", flush=True)
+                    sleep(.5)
+            elif not status:
+                for item in game.get_player():
+                    if item == -1:
+                        input('Oponente saiu do jogo')
+                break
+            else:
+                if play in 'X': i = 1
+                else: i = 2
+                
+                print(f'Player {i}, posicione {play}')
+                board = game.get_board()
+                print_board(board)
+                
+                while True and status:
+                    try:
+                        x = int(input('X: '))
+                        y = int(input('Y: '))
+                    except KeyboardInterrupt:
+                        status = False
+                        game.quit_game(client_id)
+                        game._pyroRelease()
+                        lobby._pyroRelease()
+                        break
+                    except:
+                        input('Movimento inválido')
+                    else:
+                        if game.make_move(x, y, play): break
+                        input('Movimento inválido')
+    except KeyboardInterrupt:
+        game.quit_game(client_id)
+        
     game._pyroRelease()
     lobby._pyroRelease()

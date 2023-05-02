@@ -1,5 +1,12 @@
+import platform
+from os import system
 import Pyro5.server as Pyro5
 from src.Lobby import Lobby
+
+def clear() -> None:
+    so = platform.system()
+    if so == 'Windows': system('cls')
+    else: system('clear')
 
 class Server:
     def __init__(self, daemon: Pyro5.Daemon) -> None:
@@ -24,6 +31,7 @@ class Server:
             print(f"Cliente: {client_id} desconectado")
     
 if __name__ == '__main__':
+    clear()
     daemon = Pyro5.Daemon(host='localhost', port=46327)
     
     server = Server(daemon)

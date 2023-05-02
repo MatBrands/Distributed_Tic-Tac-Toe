@@ -44,7 +44,18 @@ class TicTac:
         else:
             return False
         
+    def quit_game(self, player: str) -> None:
+        for i, item in enumerate(self.player):
+            if item == player:
+                self.player[i] = -1
+                break
+        
     def check_win(self) -> int:
+        for i, player in enumerate(self.player):
+            if player == -1:
+                if i == 0: return 2
+                else: return 1
+        
         for i in np.arange(BOARD_SIZE):
             for j in np.arange(BOARD_SIZE-3):
                 # Rows
