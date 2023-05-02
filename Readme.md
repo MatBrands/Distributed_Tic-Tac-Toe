@@ -45,7 +45,7 @@ conda env create -f environment.yml
 
 Ativar
 ```sh
-conda activate tic_tac_game_venv
+conda activate tic_tac_toe_venv
 ```
 
 Desativar
@@ -58,12 +58,12 @@ Pode-se utilizar o arquivo requirements.txt para criar o ambiente virtual.
 
 Criar ambiente virtual
 ```sh
-python -m venv tic_tac_game_venv
+python -m venv tic_tac_toe_venv
 ```
 
 Ativar
 ```sh
-source ./tic_tac_game_venv/bin/activate
+source ./tic_tac_toe_venv/bin/activate
 ```
 
 Navegar até a pasta de destino
@@ -89,7 +89,7 @@ Para funcionamento, inicialmente deve-se inicializar o servidor
 
 Navegar até a pasta de destino
 ```sh
-cd tic_tac_game/server
+cd tic_tac_toe/server
 ```
 
 Execute o programa
@@ -102,7 +102,7 @@ Após o servidor estar ativo, pode-se executar o cliente.
 
 Navegar até a pasta de destino
 ```sh
-cd tic_tac_game/client
+cd tic_tac_toe/client
 ```
 
 Execute o programa
@@ -122,6 +122,7 @@ python __init__.py
 │   └── server
 │       ├── __init__.py
 │       └── src
+│           ├── Lobby.py
 │           └── TicTac.py
 └── utils
     ├── environment.yml
@@ -138,6 +139,7 @@ Para implementação do RPC em Python foi utilizada a biblioteca Pyro5. Com o Py
 
 ## Motivações
 ...
+
 ## Contribuições
 ...
 
