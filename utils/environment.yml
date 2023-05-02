@@ -1,4 +1,4 @@
-name: tic_tac_game_venv
+name: tic_tac_toe_venv
 channels:
   - conda-forge
 dependencies:
