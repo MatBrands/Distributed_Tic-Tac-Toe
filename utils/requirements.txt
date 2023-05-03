@@ -1,2 +1,2 @@
-numpy
-pyro5
+numpy==1.24.3
+pyro5==5.14
