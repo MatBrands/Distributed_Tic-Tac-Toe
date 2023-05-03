@@ -13,22 +13,19 @@ Este projeto tem como objetivo a conclusão da avaliação prática para a disci
 - Instalação/Execução
 - Organização do projeto
 - Middleware
-- Diagrama
-- Motivações
-- Contribuições
 - License
 
 ## Tecnologias
 Esse projeto utiliza as seguintes bibliotecas:
 
-python
-numpy
-pyro5
+python=3.11.3
+numpy=1.24.3
+pyro5=5.14
 sys
 os
 
 ## Instalação/Execução
-Foi utilizado o Python v3.11.
+Foi utilizado o Python v3.11.3.
 
 ### Conda
 No desenvolvimento foi utilizado o gerenciador de pacotes e ambientes Conda. Portanto para prosseguir necessita-se de sua instalação.
@@ -82,7 +79,9 @@ deactivate
 ```
 
 ### Execução
-A aplicação consiste na separação do cliente e servidor.
+As dependências devem ser instaladas em ambos os lados, cliente e servidor. As instruções de instalação já foram descritas acima. Lembrando de **ativar** o ambiente virtual antes de executar o programa.
+
+A execução do programa é feita em duas etapas, inicialmente deve-se executar o servidor e em seguida os clientes.
 
 #### Server
 Para funcionamento, inicialmente deve-se inicializar o servidor
@@ -97,8 +96,10 @@ Execute o programa
 python __init__.py
 ```
 
+O servidor ficará aguardando por conexões de clientes.
+
 ### Client
-Após o servidor estar ativo, pode-se executar o cliente.
+Após o servidor estar ativo, pode-se executar o cliente. O cliente pode ser executado em quantas máquinas forem necessárias. O programa irá solicitar o IP e a Porta do servidor, que deve ser informado para que o cliente possa se conectar.
 
 Navegar até a pasta de destino
 ```sh
@@ -133,15 +134,6 @@ python __init__.py
 Na resolução do projeto foi proposto a utilização do middleware RPC (Remote Procedure Call) que é um modelo de comunicação que permite que um programa execute um procedimento em outro computador ou processo, como se estivesse chamando uma função local. O objetivo do RPC é tornar a comunicação entre sistemas distribuídos mais transparente e fácil de usar.
 
 Para implementação do RPC em Python foi utilizada a biblioteca Pyro5. Com o Pyro, é possível expor objetos Python em um servidor, permitindo que clientes remotos chamem métodos nesses objetos como se estivessem chamando métodos locais. O Pyro utiliza um protocolo de comunicação transparente para serializar e desserializar objetos Python, permitindo que eles sejam transferidos através da rede.
-
-## Diagrama
-...
-
-## Motivações
-...
-
-## Contribuições
-...
 
 ## License
 Mit.
